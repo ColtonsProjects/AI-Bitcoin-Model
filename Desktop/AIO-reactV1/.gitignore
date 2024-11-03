@@ -23,6 +23,14 @@ procfile
 .env.test.local
 .env.production.local
 
+.DS_Store
+.Trash
+.bash_history
+.npm/
+.vscode/
+etc.
+
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
