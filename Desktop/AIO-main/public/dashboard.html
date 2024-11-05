@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Outbound Calling Dashboards</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="static/dbscript.js" defer></script>
+</head>
+<body>
+    <h1>AI Outbound Calling Dashboard</h1>
+
+    
+    <div class="container">
+        <div class="card">
+            <h2>Create Campaigns</h2>
+            <input type="text" id="campaignName" placeholder="Campaign Name">
+            <textarea id="openingLine" placeholder="Opening Line"></textarea>
+            <div id="objectives"></div>
+            <button onclick="addObjective()">Add Objective</button>
+        </div>
+        <div class="card">
+            <h2>Add Numbers to Call</h2>
+            <textarea id="phoneNumbers" placeholder="Enter phone numbers, one per line"></textarea>
+            <input type="file" id="csvFile" accept=".csv" style="display: none;">
+            <button onclick="document.getElementById('csvFile').click()">Upload CSV</button>
+        </div>
+    </div>
+    <button id="createCampaignBtn" type="button">Create Campaign</button>
+    <button id="saveCampaignBtn" type="button" style="display: none;">Save Changes</button>
+    
+    <div class="card">
+        <h2>Active Campaigns</h2>
+        <table id="campaignsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Opening Line</th>
+                    <th>AI Bot Objectives</th>
+                    <th>Number of Contacts</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    
+    <div class="card">
+        <h2>Campaign Performance</h2>
+        <canvas id="chart"></canvas>
+    </div>
+
+    <button id="viewAnalyticsBtn" type="button" onclick="window.location.href='static/analytics.html'">View Campaign Analytics</button>
+
+</body>
+</html>
