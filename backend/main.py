@@ -2,16 +2,10 @@ import os
 import requests
 import time
 import datetime
-
+from predictionModel import create_dataframe, preprocess_data, build_model, create_sequences
 from flask import Flask, jsonify
 import numpy as np
 from dotenv import load_dotenv
-# from predictionModel import (
-#     fetch_data,
-#     model,
-#     scaler,
-#     seq_length
-# )
 from flask_cors import CORS
 
 load_dotenv()
@@ -254,27 +248,17 @@ def get_day_prices():
     else:
         raise Exception(f'API request failed with status code {response.status_code}')
 
-# __________________________________________________________________________
 
-# ______________________________ Prediction Model _______________________________
-
-# @app.route("/predict")
-# def predict():
-#     latest_data = fetch_data()
-#     scaled_latest_data = scaler.transform(latest_data)  # Scale the data
-
-#     # Create sequences for prediction
-#     x_input = np.array([scaled_latest_data[-seq_length:]])  # Use the last `seq_length` data points
-#     prediction = model.predict(x_input)
-#     prediction = scaler.inverse_transform(prediction)  # Inverse transform to get the actual value
-
-#     return jsonify({"predicted_price": prediction[0][0]})
 
 # __________________________________________________________________________
 
 @app.route("/")
 def home():
     return "Backend is up and running!"
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
 
 # ______________________________ Test Coinalyze API ______________________________
 @app.route("/open-interest")
@@ -322,6 +306,42 @@ def hour_price():
 def week_price():
     data = get_week_prices()
     return jsonify(data)
+
+
+# ______________________________ Prediction Model _______________________________
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    try:
+        # Parse input data
+        input_data = request.json  # Expects JSON with relevant input fields
+        if not input_data:
+            return jsonify({"error": "Invalid input"}), 400
+
+        # Load the stored data and model
+        combined_data = create_dataframe(load_data())
+        if combined_data.empty:
+            return jsonify({"error": "No data available for predictions"}), 400
+
+        # Preprocess the data
+        scaled_data, scaler = preprocess_data(combined_data.values)
+        seq_length = 60
+        x_data, _ = create_sequences(scaled_data, seq_length)
+
+        # Load the pre-trained model
+        model = build_model((x_data.shape[1], x_data.shape[2]))
+        model.load_weights("bitcoin_price_model.h5")
+
+        # Predict
+        predictions = model.predict(x_data)
+        predictions = scaler.inverse_transform(predictions)  # Scale back to original
+
+        # Return the latest prediction
+        latest_prediction = predictions[-1][0]  # Assumes the prediction is a 2D array
+        print(f"Latest prediction: {latest_prediction}", flush=True)
+        return jsonify({"prediction": float(latest_prediction)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # _______________________________________________________________________________
 if __name__ == "__main__":
