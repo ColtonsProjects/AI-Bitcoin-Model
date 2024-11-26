@@ -2,7 +2,7 @@ import os
 import requests
 import time
 import datetime
-from predictionModel import create_dataframe, preprocess_data, build_model, create_sequences
+#from predictionModel import create_dataframe, preprocess_data, build_model, create_sequences
 from flask import Flask, jsonify
 import numpy as np
 from dotenv import load_dotenv
@@ -310,38 +310,38 @@ def week_price():
 
 # ______________________________ Prediction Model _______________________________
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    try:
-        # Parse input data
-        input_data = request.json  # Expects JSON with relevant input fields
-        if not input_data:
-            return jsonify({"error": "Invalid input"}), 400
+# @app.route("/predict", methods=["POST"])
+# def predict():
+#     try:
+#         # Parse input data
+#         input_data = request.json  # Expects JSON with relevant input fields
+#         if not input_data:
+#             return jsonify({"error": "Invalid input"}), 400
 
-        # Load the stored data and model
-        combined_data = create_dataframe(load_data())
-        if combined_data.empty:
-            return jsonify({"error": "No data available for predictions"}), 400
+#         # Load the stored data and model
+#         combined_data = create_dataframe(load_data())
+#         if combined_data.empty:
+#             return jsonify({"error": "No data available for predictions"}), 400
 
-        # Preprocess the data
-        scaled_data, scaler = preprocess_data(combined_data.values)
-        seq_length = 60
-        x_data, _ = create_sequences(scaled_data, seq_length)
+#         # Preprocess the data
+#         scaled_data, scaler = preprocess_data(combined_data.values)
+#         seq_length = 60
+#         x_data, _ = create_sequences(scaled_data, seq_length)
 
-        # Load the pre-trained model
-        model = build_model((x_data.shape[1], x_data.shape[2]))
-        model.load_weights("bitcoin_price_model.h5")
+#         # Load the pre-trained model
+#         model = build_model((x_data.shape[1], x_data.shape[2]))
+#         model.load_weights("bitcoin_price_model.h5")
 
-        # Predict
-        predictions = model.predict(x_data)
-        predictions = scaler.inverse_transform(predictions)  # Scale back to original
+#         # Predict
+#         predictions = model.predict(x_data)
+#         predictions = scaler.inverse_transform(predictions)  # Scale back to original
 
-        # Return the latest prediction
-        latest_prediction = predictions[-1][0]  # Assumes the prediction is a 2D array
-        print(f"Latest prediction: {latest_prediction}", flush=True)
-        return jsonify({"prediction": float(latest_prediction)})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+#         # Return the latest prediction
+#         latest_prediction = predictions[-1][0]  # Assumes the prediction is a 2D array
+#         print(f"Latest prediction: {latest_prediction}", flush=True)
+#         return jsonify({"prediction": float(latest_prediction)})
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
 
 # _______________________________________________________________________________
 if __name__ == "__main__":
