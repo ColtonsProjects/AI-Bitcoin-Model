@@ -46,15 +46,17 @@ function App() {
             selectedInterval={selectedInterval}
             onIntervalChange={setSelectedInterval}
           />
-          <PredictionMetrics />
         </div>
 
         <div className="mt-8 bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-xl font-bold text-gray-800 mb-4">About Our Model</h2>
           <p className="text-gray-600 leading-relaxed">
-            Our advanced machine learning model combines historical price data, market sentiment analysis, 
-            and technical indicators to provide accurate Bitcoin price predictions. The model is continuously 
-            trained on real-time data and adapts to changing market conditions.
+            Our model leverages a Long Short-Term Memory (LSTM) neural network to predict Bitcoin prices. 
+            It preprocesses historical price data by scaling it to a range between 0 and 1, ensuring that 
+            the model can efficiently learn patterns. The model is trained on sequences of past price data, 
+            using features such as open, high, low, close, and volume. It is capable of making predictions 
+            based on the most recent data, adapting to market changes in real-time. The model's predictions 
+            are then transformed back to the original scale for interpretability.
           </p>
         </div>
       </main>

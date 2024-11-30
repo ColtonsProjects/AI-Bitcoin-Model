@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { LineChart, ArrowUp, ArrowDown, Clock } from 'lucide-react';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
@@ -34,6 +34,7 @@ export default function PriceChart({
   const [livePrice, setLivePrice] = useState<number>(currentPrice);
   const [priceDifference, setPriceDifference] = useState<number | null>(null);
   const [predictedPrice, setPredictedPrice] = useState<number | null>(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const fetchCurrentPrice = () => {
@@ -75,13 +76,20 @@ export default function PriceChart({
           const formattedData = {
             labels: data.map((entry: PriceEntry) => {
               const date = new Date(entry.open_time);
-              if (selectedInterval === '30d') {
-                return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-              } else if (selectedInterval === '7d') {
-                return date.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-              } else {
-                return date.toLocaleString([], { hour: '2-digit', minute: '2-digit' });
-              }
+              
+              // Manually add 5 hours to the date
+              date.setHours(date.getHours());
+
+              const options: Intl.DateTimeFormatOptions = {
+                timeZone: 'UTC', // Use UTC since we're manually adjusting the time
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true // Use 12-hour format to include AM/PM
+              };
+
+              return date.toLocaleString('en-US', options);
             }),
             datasets: [
               {
@@ -106,14 +114,17 @@ export default function PriceChart({
   }, [selectedInterval, livePrice]);
 
   useEffect(() => {
-    const fetchPredictedPrice = () => {
-      fetch('http://127.0.0.1:5001/predict-next-price')
-        .then(response => response.json())
-        .then(data => setPredictedPrice(data.predicted_next_price))
-        .catch(error => console.error('Error fetching predicted price:', error));
-    };
+    if (!hasFetched.current) {
+      const fetchPredictedPrice = () => {
+        fetch('http://127.0.0.1:5001/predict-next-price')
+          .then(response => response.json())
+          .then(data => setPredictedPrice(data.predicted_next_price))
+          .catch(error => console.error('Error fetching predicted price:', error));
+      };
 
-    fetchPredictedPrice();
+      fetchPredictedPrice();
+      hasFetched.current = true;
+    }
   }, [selectedInterval]);
 
   const formatPriceDifference = (difference: number) => {
@@ -194,7 +205,7 @@ export default function PriceChart({
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <ArrowUp className="w-5 h-5 text-green-600" />
-            <span className="text-sm text-gray-600">Predicted</span>
+            <span className="text-sm text-gray-600">Tomorrow's Predicted Price</span>
           </div>
           <p className="text-2xl font-bold text-green-600">
             {predictedPrice !== null ? `$${predictedPrice.toLocaleString()}` : 'Loading...'}
