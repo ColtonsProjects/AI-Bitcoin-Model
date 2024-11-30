@@ -1,6 +1,8 @@
 # Backend Model Explanation
 The model is designed to predict the next closing price of bitcoin based on historical data. It uses a Long Short-Term Memory (LSTM) neural network, which is well-suited for time series prediction tasks due to its ability to capture temporal dependencies.
 
+![Home Image](home.png)
+
 ## Key Components
 
 ### 1. Data Preprocessing:
