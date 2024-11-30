@@ -33,6 +33,7 @@ export default function PriceChart({
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [livePrice, setLivePrice] = useState<number>(currentPrice);
   const [priceDifference, setPriceDifference] = useState<number | null>(null);
+  const [predictedPrice, setPredictedPrice] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCurrentPrice = () => {
@@ -103,6 +104,17 @@ export default function PriceChart({
         .catch(error => console.error('Error fetching data:', error));
     }
   }, [selectedInterval, livePrice]);
+
+  useEffect(() => {
+    const fetchPredictedPrice = () => {
+      fetch('http://127.0.0.1:5001/predict-next-price')
+        .then(response => response.json())
+        .then(data => setPredictedPrice(data.predicted_next_price))
+        .catch(error => console.error('Error fetching predicted price:', error));
+    };
+
+    fetchPredictedPrice();
+  }, [selectedInterval]);
 
   const formatPriceDifference = (difference: number) => {
     const formattedDifference = Math.abs(difference).toLocaleString(undefined, {
@@ -185,7 +197,7 @@ export default function PriceChart({
             <span className="text-sm text-gray-600">Predicted</span>
           </div>
           <p className="text-2xl font-bold text-green-600">
-            0
+            {predictedPrice !== null ? `$${predictedPrice.toLocaleString()}` : 'Loading...'}
           </p>
         </div>
       </div>
