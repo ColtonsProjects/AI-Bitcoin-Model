@@ -329,8 +329,12 @@ def predict_next_price_route():
         next_price = predict_next_price(model, df, scaler)
         print("Predicted Next Price:", next_price)  # Debug: Check prediction
 
-        # Convert the prediction to a standard Python float
-        predicted_price = float(next_price[0][0])
+        # Check if next_price is a valid array
+        if next_price is not None and len(next_price) > 0:
+            # Convert the prediction to a standard Python float
+            predicted_price = float(next_price[0])
+        else:
+            raise ValueError("Prediction failed or returned an empty result.")
 
         # Return the prediction as JSON
         return jsonify({"predicted_next_price": predicted_price})
