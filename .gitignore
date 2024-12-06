@@ -1,0 +1,22 @@
+# System files
+.DS_Store
+.Trash/
+Pictures/
+Library/
+.vscode/
+__pycache__/
+*.pyc
+
+# Environment
+venv/
+env/
+.env
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Other unnecessary directories
+.cache/
+.config/
+.local/
