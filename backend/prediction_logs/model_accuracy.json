@@ -1,0 +1,26 @@
+{
+  "polynomial": {
+    "total_error": 1633.7322045559413,
+    "mean_error": 116.69515746828152,
+    "predictions_count": 14,
+    "mae": 116.69515746828152,
+    "mse": 19004.390635085936,
+    "correct_direction": 6
+  },
+  "lasso": {
+    "total_error": 1309.7612372566073,
+    "mean_error": 93.55437408975766,
+    "predictions_count": 14,
+    "mae": 93.55437408975766,
+    "mse": 18431.23230016137,
+    "correct_direction": 11
+  },
+  "lstm": {
+    "total_error": 909.157572128679,
+    "mean_error": 64.93982658061994,
+    "predictions_count": 14,
+    "mae": 64.93982658061994,
+    "mse": 5716.318609225751,
+    "correct_direction": 6
+  }
+}

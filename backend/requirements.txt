@@ -1,0 +1,14 @@
+flask
+pandas
+scikit-learn
+requests
+python-dotenv
+websocket-client
+datetime
+flask-cors
+numpy
+keras
+tensorflow-cpu
+pandas
+
+
